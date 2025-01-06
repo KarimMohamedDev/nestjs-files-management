@@ -1,16 +1,11 @@
 import {
   Controller,
-  FileTypeValidator,
-  HttpStatus,
-  MaxFileSizeValidator,
-  ParseFilePipe,
   Post,
   UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { FileSignatureValidator } from '../shared/files/validators/file-signature.validator';
 import { CreateParseFilePipe } from 'src/shared/files/files-validation-factory';
 type File = Express.Multer.File;
 
