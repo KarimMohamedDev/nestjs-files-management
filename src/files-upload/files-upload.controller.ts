@@ -10,6 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FileSignatureValidator } from '../shared/files/validators/file-signature.validator';
 type File = Express.Multer.File;
 
 @Controller('files-upload')
@@ -26,8 +27,9 @@ export class FilesUploadController {
               `File is too large, max file size is ${maxSize} bytes`,
           }),
           new FileTypeValidator({
-            fileType: /^image\/(jpeg|png)$/,
+            fileType: /^application\/pdf$/,
           }),
+          new FileSignatureValidator(),
         ],
         errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
         fileIsRequired: true,
@@ -50,7 +52,7 @@ export class FilesUploadController {
               `File is too large, max file size is ${maxSize} bytes`,
           }),
           new FileTypeValidator({
-            fileType: /^image\/(jpeg|png)$/,
+            fileType: /^image\/(pdf)$/,
           }),
         ],
         errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
