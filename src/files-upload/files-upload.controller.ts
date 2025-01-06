@@ -1,5 +1,9 @@
 import {
   Controller,
+  FileTypeValidator,
+  HttpStatus,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   UploadedFile,
   UploadedFiles,
@@ -11,11 +15,25 @@ type File = Express.Multer.File;
 @Controller('files-upload')
 export class FilesUploadController {
   @Post('single')
-  @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
-  ) // 2MB limit
-  uploadFile(@UploadedFile() file: File) {
-    return file;
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1024 * 1024 * 6,
+            message: (maxSize) =>
+              `File is too large, max file size is ${maxSize} bytes`,
+          }),
+          new FileTypeValidator({ fileType: '/jpg|png/' }),
+        ],
+        errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        fileIsRequired: true,
+      }),
+    )
+    file: File,
+  ) {
+    return file.originalname;
   }
 
   @Post('multiple')
