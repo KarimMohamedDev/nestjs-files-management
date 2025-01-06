@@ -25,7 +25,9 @@ export class FilesUploadController {
             message: (maxSize) =>
               `File is too large, max file size is ${maxSize} bytes`,
           }),
-          new FileTypeValidator({ fileType: '/jpg|png/' }),
+          new FileTypeValidator({
+            fileType: /^image\/(jpeg|png)$/,
+          }),
         ],
         errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
         fileIsRequired: true,
@@ -38,7 +40,25 @@ export class FilesUploadController {
 
   @Post('multiple')
   @UseInterceptors(FilesInterceptor('files', 3))
-  uploadMultipleFiles(@UploadedFiles() files: File[]) {
+  uploadMultipleFiles(
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1024 * 1024 * 6,
+            message: (maxSize) =>
+              `File is too large, max file size is ${maxSize} bytes`,
+          }),
+          new FileTypeValidator({
+            fileType: /^image\/(jpeg|png)$/,
+          }),
+        ],
+        errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+        fileIsRequired: true,
+      }),
+    )
+    files: File[],
+  ) {
     return files.map((file) => file.originalname);
   }
 }
