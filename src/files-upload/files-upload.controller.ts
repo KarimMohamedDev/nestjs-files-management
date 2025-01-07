@@ -14,7 +14,7 @@ export class FilesUploadController {
   @Post('single')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
-    @UploadedFile(CreateParseFilePipe(1024 * 1024 * 6, ['pdf']))
+    @UploadedFile(CreateParseFilePipe('2MB', ['pdf']))
     file: File,
   ) {
     return file.originalname;
@@ -23,9 +23,7 @@ export class FilesUploadController {
   @Post('multiple')
   @UseInterceptors(FilesInterceptor('files', 3))
   uploadMultipleFiles(
-    @UploadedFiles(
-      CreateParseFilePipe(1024 * 1024 * 6, ['png', 'jpg', 'jpeg', 'none']),
-    )
+    @UploadedFiles(CreateParseFilePipe('4MB', ['png', 'jpg', 'jpeg', 'none']))
     files: File[],
   ) {
     return files.map((file) => file.originalname);
