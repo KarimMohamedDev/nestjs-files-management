@@ -23,7 +23,9 @@ export class FilesUploadController {
   @Post('multiple')
   @UseInterceptors(FilesInterceptor('files', 3))
   uploadMultipleFiles(
-    @UploadedFiles(CreateParseFilePipe(1024 * 1024 * 6, ['png', 'jpg', 'jpeg']))
+    @UploadedFiles(
+      CreateParseFilePipe(1024 * 1024 * 6, ['png', 'jpg', 'jpeg', 'none']),
+    )
     files: File[],
   ) {
     return files.map((file) => file.originalname);
