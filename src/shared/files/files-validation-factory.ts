@@ -8,10 +8,11 @@ import {
 import { FileSignatureValidator } from './validators/file-signature.validator';
 import { FileType } from './types/file.types';
 import { createFileTypeRegex } from './utils/file.util';
+import { nonEmptyArray } from '../utils/array.utils';
 
 const createFileValidator = (
   maxSize: number,
-  fileTypes: FileType[],
+  fileTypes: nonEmptyArray<FileType>,
 ): FileValidator[] => {
   const fileTypeRegex = createFileTypeRegex(fileTypes);
   return [
@@ -32,7 +33,7 @@ const createFileValidator = (
 
 export const CreateParseFilePipe = (
   maxSize: number,
-  fileTypes: FileType[],
+  fileTypes: nonEmptyArray<FileType>,
 ): ParseFilePipe =>
   new ParseFilePipe({
     validators: createFileValidator(maxSize, fileTypes),
