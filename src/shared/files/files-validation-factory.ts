@@ -6,31 +6,36 @@ import {
   ParseFilePipe,
 } from '@nestjs/common';
 import { FileSignatureValidator } from './validators/file-signature.validator';
+import { FileType } from './types/file.types';
+import { createFileTypeRegex } from './utils/file.util';
 
 const createFileValidator = (
   maxSize: number,
-  fileType: RegExp | string,
-): FileValidator[] => [
-  //validate file size
-  new MaxFileSizeValidator({
-    maxSize: maxSize,
-    message: (maxSize) =>
-      `File is too large, max file size is ${maxSize} bytes`,
-  }),
-  //validate file type
-  new FileTypeValidator({
-    fileType: fileType,
-  }),
-  //validate file signature
-  new FileSignatureValidator(),
-];
+  fileTypes: FileType[],
+): FileValidator[] => {
+  const fileTypeRegex = createFileTypeRegex(fileTypes);
+  return [
+    //validate file size
+    new MaxFileSizeValidator({
+      maxSize: maxSize,
+      message: (maxSize) =>
+        `File is too large, max file size is ${maxSize} bytes`,
+    }),
+    //validate file type
+    new FileTypeValidator({
+      fileType: fileTypeRegex,
+    }),
+    //validate file signature
+    new FileSignatureValidator(),
+  ];
+};
 
 export const CreateParseFilePipe = (
   maxSize: number,
-  fileType: RegExp,
+  fileTypes: FileType[],
 ): ParseFilePipe =>
   new ParseFilePipe({
-    validators: createFileValidator(maxSize, fileType),
+    validators: createFileValidator(maxSize, fileTypes),
     errorHttpStatusCode: HttpStatus.UNSUPPORTED_MEDIA_TYPE,
     fileIsRequired: true,
   });
